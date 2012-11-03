@@ -1,3 +1,9 @@
+# Ricco Amezcua, 11/3/12
+# Created for CS450
+# This program simulates golfers hitting balls down a drive concurrently and a cart
+# picking up balls when a universal stash of balls has gotten too low.  This program
+# is a test of using semaphores.
+
 from threading import Semaphore, Thread, Lock
 from random import random
 from time import sleep
@@ -37,9 +43,9 @@ def golfer(my_id):
 			balls_on_field += 1
 		
 
-STASH_SIZE 	= 20
-BUCKET_SIZE = 5
-NUM_GOLFERS = 3
+STASH_SIZE 	= int(raw_input("Size of stash?"))
+BUCKET_SIZE = int(raw_input("Size of bucket?"))
+NUM_GOLFERS = int(raw_input("Number of golfers?"))
 
 if __name__ == '__main__':
 	stash 										= STASH_SIZE
