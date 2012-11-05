@@ -2,6 +2,7 @@ from __future__ import print_function
 from threading import Semaphore, Lock, Thread
 from collections import deque
 from random import random, randint
+import random
 from time import sleep
 import sys
 import logging
@@ -27,7 +28,8 @@ class Lightswitch:
 def act_as_baboon(my_id, init_side):
     global crossing_side
     side = init_side
-    while True:
+    random.seed(my_id)
+    for i in xrange(NUM_CROSSINGS):
         with turnstile:
             switches[side].lock(rope)
         with multiplex:
@@ -35,12 +37,13 @@ def act_as_baboon(my_id, init_side):
                 crossing_side = side
                 crossing.add(my_id)
                 waiting[side].remove(my_id)
-            sleep(random())  # crossing
+            sleep(random.random())  # crossing
             with mutex:
                 crossing.remove(my_id)
                 waiting[1 - side].add(my_id)
         switches[side].unlock(rope)
         side = 1 - side
+    print ("Baboon %d finished" % my_id)
 
 
 def report():
@@ -64,6 +67,7 @@ def report():
 
 ROPE_MAX    = 5
 NUM_BABOONS = 10
+NUM_CROSSINGS = 5
 side_names  = ['west', 'east']
 
 if __name__ == '__main__':
@@ -87,4 +91,3 @@ if __name__ == '__main__':
     for t in bthreads:
         t.start()
 
-    Thread(target=report).start()
