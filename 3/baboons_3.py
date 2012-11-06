@@ -64,6 +64,8 @@ def sim():
     switches   = [Lightswitch(), Lightswitch()]
     multiplex  = Semaphore(ROPE_MAX)
 
+    random.seed(100) # Used for choosing sides
+
     # reporting structures
     mutex         = Lock()
     waiting       = [set(), set()]
@@ -120,6 +122,6 @@ if __name__ == '__main__':
         sim_times.append(timer.timeit(1))
         print("-" * 50)
 
-    print(sim_times)
+    #print(sim_times)
     print("The total time elapsed: %0.4fs" % (sum(sim_times)))
     print("Avg. time per run: %0.4fs" % (sum(sim_times)/NUM_SIM)) 
