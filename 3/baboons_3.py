@@ -6,6 +6,7 @@ import random
 from time import sleep
 import sys
 import logging
+from timeit import Timer
 
 class Lightswitch:
     def __init__(self):
@@ -37,7 +38,7 @@ def act_as_baboon(my_id, init_side):
                 crossing_side = side
                 crossing.add(my_id)
                 waiting[side].remove(my_id)
-            sleep(random.random())  # crossing
+            sleep(random.random())  # crossing; Seeded random number
             with mutex:
                 crossing.remove(my_id)
                 waiting[1 - side].add(my_id)
@@ -45,32 +46,17 @@ def act_as_baboon(my_id, init_side):
         side = 1 - side
     print ("Baboon %d finished" % my_id)
 
+def sim():
+		# Declaring all the variables as global so they can be modified by the baboon func
+    global turnstile
+    global switches
+    global rope
+    global multiplex
+    global mutex
+    global waiting
+    global crossing
+    global crossing_side
 
-def report():
-    while True:
-        sleep(1)
-        with mutex:
-            if crossing_side is None:
-                continue
-            print(repr(waiting[0]).rjust(30), end=' ')
-            if crossing_side == 0:
-                print('---', end='')
-            else:
-                print('<--', end='')
-            print(repr(crossing).center(17), end=' ')
-            if crossing_side == 0:
-                print('-->', end=' ')
-            else:
-                print('---', end=' ')
-            print(waiting[1])
-        
-
-ROPE_MAX    = 5
-NUM_BABOONS = 10
-NUM_CROSSINGS = 5
-side_names  = ['west', 'east']
-
-if __name__ == '__main__':
     rope       = Lock()
     turnstile  = Lock()
     switches   = [Lightswitch(), Lightswitch()]
@@ -90,4 +76,36 @@ if __name__ == '__main__':
 
     for t in bthreads:
         t.start()
+		
+    for t in bthreads:
+        t.join()
 
+
+def report():
+    while True:
+        sleep(1)
+        with mutex:
+            if crossing_side is None:
+                continue
+            print(repr(waiting[0]).rjust(30), end=' ')
+            if crossing_side == 0:
+                print('---', end='')
+            else:
+                print('<--', end='')
+            print(repr(crossing).center(17), end=' ')
+            if crossing_side == 0:
+                print('-->', end=' ')
+            else:
+                print('---', end=' ')
+            print(waiting[1])
+
+
+ROPE_MAX    = 5
+NUM_BABOONS = 10
+NUM_CROSSINGS = 5
+side_names  = ['west', 'east']
+
+if __name__ == '__main__':
+	timer = Timer(sim)
+	print(timer.timeit(1))
+    
