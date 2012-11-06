@@ -46,6 +46,8 @@ def act_as_baboon(my_id, init_side):
         side = 1 - side
     print ("Baboon %d finished" % my_id)
 
+# The sim function will run the actual simulation so that the main
+# function can do the timing
 def sim():
 		# Declaring all the variables as global so they can be modified by the baboon func
     global turnstile
@@ -81,6 +83,8 @@ def sim():
         t.join()
 
 
+# This reporting function is no longer used with the
+# new timing
 def report():
     while True:
         sleep(1)
@@ -100,12 +104,22 @@ def report():
             print(waiting[1])
 
 
+# These are the tunable variables for changing the simulation
 ROPE_MAX    = 5
+NUM_SIM     = 1
 NUM_BABOONS = 10
 NUM_CROSSINGS = 5
 side_names  = ['west', 'east']
 
 if __name__ == '__main__':
-	timer = Timer(sim)
-	print(timer.timeit(1))
-    
+    sim_times = []
+    print("Timing %d simulations with %d baboons, %d crossings:" % (NUM_SIM, NUM_BABOONS, NUM_CROSSINGS)) 
+    print("-" * 50)
+    for i in range(NUM_SIM):
+        timer = Timer(sim)
+        sim_times.append(timer.timeit(1))
+        print("-" * 50)
+
+    print(sim_times)
+    print("The total time elapsed: %0.4fs" % (sum(sim_times)))
+    print("Avg. time per run: %0.4fs" % (sum(sim_times)/NUM_SIM)) 
