@@ -46,6 +46,11 @@ def act_as_baboon(my_id, init_side):
         side = 1 - side
     print ("Baboon %d finished" % my_id)
 
+#def run_baboon(t):
+    #t.run()
+    #t.join()
+
+
 # The sim function will run the actual simulation so that the main
 # function can do the timing
 def sim():
@@ -64,7 +69,7 @@ def sim():
     switches   = [Lightswitch(), Lightswitch()]
     multiplex  = Semaphore(ROPE_MAX)
 
-    random.seed(100) # Used for choosing sides
+    #random.seed(100) # Used for choosing sides
 
     # reporting structures
     mutex         = Lock()
@@ -83,6 +88,10 @@ def sim():
 		
     for t in bthreads:
         t.join()
+    
+    #for t in bthreads:
+        #tim = Timer(lambda:run_baboon(t))
+        #print(tim.timeit(number=1))
 
 
 # This reporting function is no longer used with the
@@ -108,9 +117,9 @@ def report():
 
 # These are the tunable variables for changing the simulation
 ROPE_MAX    = 5
-NUM_SIM     = 1
-NUM_BABOONS = 10
-NUM_CROSSINGS = 5
+NUM_SIM     = 3
+NUM_BABOONS = 5
+NUM_CROSSINGS = 20
 side_names  = ['west', 'east']
 
 if __name__ == '__main__':
