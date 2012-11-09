@@ -29,18 +29,29 @@ class Lightswitch:
 def act_as_baboon(my_id, init_side):
     side = init_side
     random.seed(my_id)
+    global num_on_rope
+    global draining
     for i in xrange(NUM_CROSSINGS):
         with turnstile:
             switches[side].lock(rope)
+            num_on_rope += 1
+            # If the rope hits its maximum, then the turnstile that
+            # lets baboons through gets locked
+            if num_on_rope == ROPE_MAX:
+                draining = True
+                turnstile.acquire()
         with multiplex:
             sleep(random.random())  # crossing; Seeded random number
-        switches[side].unlock(rope)
-        side = 1 - side
+        with turnstile2:
+            switches[side].unlock(rope)
+            side = 1 - side
+            num_on_rope -= 1
+            # If the rope was at draining status, and no more baboons are
+            # on the rope, then sides are allowed to fight for the rope
+            if (num_on_rope == 0) and draining:
+                draining = False
+                turnstile.release()
     print ("Baboon %d finished" % my_id)
-
-#def run_baboon(t):
-    #t.run()
-    #t.join()
 
 
 # The sim function will run the actual simulation so that the main
@@ -48,14 +59,24 @@ def act_as_baboon(my_id, init_side):
 def sim():
 		# Declaring all the variables as global so they can be modified by the baboon func
     global turnstile
+    global turnstile2
     global switches
     global rope
     global multiplex
+    global on_rope
+    global mutex
+    global num_on_rope
+    global draining
 
     rope       = Lock()
     turnstile  = Lock()
+    turnstile2 = Lock()
     switches   = [Lightswitch(), Lightswitch()]
     multiplex  = Semaphore(ROPE_MAX)
+    on_rope    = 0
+    num_on_rope= 0
+    mutex      = Lock()
+    draining   = False
 
     #random.seed(100) # Used for choosing sides
 
@@ -70,10 +91,6 @@ def sim():
     for t in bthreads:
         t.join()
     
-    #for t in bthreads:
-        #tim = Timer(lambda:run_baboon(t))
-        #print(tim.timeit(number=1))
-
 
 # These are the tunable variables for changing the simulation
 ROPE_MAX    = 5
