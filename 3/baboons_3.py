@@ -61,7 +61,6 @@ def sim():
     bthreads   = []
     for i in range(NUM_BABOONS):
         bid, bside = i, randint(0, 1)
-        waiting[bside].add(bid)
         bthreads.append(Thread(target=act_as_baboon, args=[bid, bside]))
 
     for t in bthreads:
@@ -72,9 +71,9 @@ def sim():
     
 # These are the tunable variables for changing the simulation
 ROPE_MAX    = 5
-NUM_SIM     = 3
-NUM_BABOONS = 5
-NUM_CROSSINGS = 20
+NUM_SIM     = 5
+NUM_BABOONS = 10
+NUM_CROSSINGS = 10
 side_names  = ['west', 'east']
 
 if __name__ == '__main__':
